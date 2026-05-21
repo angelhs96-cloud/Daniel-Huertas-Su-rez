@@ -1,2 +1,2 @@
-# Daniel-Huertas-Su-rez
+# Daniel-Huertas-Suárez
 Blog interactivo animado con Canvas API
