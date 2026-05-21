@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feria Danielito – Ejercicios Resueltos</title>
+    <style>
+        /* ──────────────────────────────────────────────
+           ESTILOS BASE (estilos.css — integrado)
+        ────────────────────────────────────────────── */
+        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap');
+ 
+        :root {
+            --rojo:     #ef4444;
+            --azul:     #3b82f6;
+            --azul-h:   #2563eb;
+            --verde:    #10b981;
+            --oscuro:   #0f172a;
+            --gris-bg:  #f1f5f9;
+            --blanco:   #ffffff;
+        }
+ 
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f6f9;
+            color: #1e293b;
+        }
+ 
+        /* ── HEADER + CANVAS ── */
+        header {
+            background-color: var(--oscuro);
+            text-align: center;
+            padding: 20px 0 12px;
+            position: relative;
+        }
+        .subtitulo {
+            color: #cbd5e1;
+            margin-top: 6px;
+            font-size: 0.9rem;
+            font-weight: 300;
+            letter-spacing: 0.03em;
+        }
+ 
+        /* ── PANEL DE CONTROL DE EJERCICIOS ── */
+        .panel-ejercicios {
+            background: var(--oscuro);
+            border-top: 1px solid #1e3a5f;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .panel-ejercicios label {
+            font-size: 0.78rem;
+            font-family: 'Syne', sans-serif;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+        .ej-btn {
+            background: transparent;
+            border: 1.5px solid #334155;
+            color: #94a3b8;
+            padding: 5px 14px;
+            border-radius: 4px;
+            font-size: 0.78rem;
+            font-family: 'Syne', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .ej-btn:hover { border-color: var(--rojo); color: #fff; }
+        .ej-btn.activo { background: var(--rojo); border-color: var(--rojo); color: #fff; }
+ 
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .speed-control input[type=range] {
+            width: 100px;
+            accent-color: var(--rojo);
+        }
+        .speed-value {
+            font-family: 'Syne', monospace;
+            font-size: 0.78rem;
+            color: #f59e0b;
+            min-width: 30px;
+        }
+ 
+        /* ── LAYOUT PRINCIPAL ── */
+        .contenedor {
+            max-width: 900px;
+            margin: 28px auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            padding: 0 16px;
+        }
+ 
+        /* ── CATEGORÍAS ── */
+        .categoria {
+            background: var(--blanco);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 18px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            border-top: 4px solid transparent;
+            transition: border-color 0.3s;
+        }
+        .categoria:nth-child(1) { border-top-color: var(--azul); }
+        .categoria:nth-child(2) { border-top-color: #8b5cf6; }
+        .categoria:nth-child(3) { border-top-color: #f59e0b; }   /* EJ.3 nueva categoría */
+ 
+        .categoria h2 {
+            margin-top: 0;
+            color: var(--oscuro);
+            font-family: 'Syne', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 700;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 8px;
+            margin-bottom: 14px;
+        }
+ 
+        .lista-productos {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+ 
+        /* ── BOTONES DE PRODUCTO (EJ.1 + animación CSS) ── */
+        .btn-producto {
+            background-color: var(--azul);
+            color: white;
+            border: none;
+            padding: 9px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;      /* EJ base */
+        }
+        .btn-producto:hover {
+            background-color: var(--azul-h);
+            transform: scale(1.07);
+            box-shadow: 0 4px 12px rgba(59,130,246,0.35);
+        }
+        .btn-producto:active {
+            transform: scale(0.97);
+        }
+ 
+        /* ── PANEL LATERAL ── */
+        .panel-info {
+            background: var(--blanco);
+            padding: 20px;
+            border-radius: 10px;
+            border-top: 5px solid var(--rojo);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            height: fit-content;
+            position: sticky;
+            top: 16px;
+        }
+        .panel-info h3 {
+            font-family: 'Syne', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--oscuro);
+            margin-bottom: 10px;
+        }
+        #vista-previa {
+            transition: opacity 0.25s ease;
+        }
+        #vista-previa h4 {
+            color: var(--rojo);
+            font-family: 'Syne', sans-serif;
+            font-size: 1.15rem;
+            margin-bottom: 8px;
+        }
+        #vista-previa p {
+            font-size: 0.87rem;
+            color: #475569;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+        .btn-apartar {
+            background-color: var(--verde);
+            color: white;
+            border: none;
+            padding: 9px 0;
+            border-radius: 6px;
+            width: 100%;
+            margin-top: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.88rem;
+            transition: all 0.25s ease;
+        }
+        .btn-apartar:hover { background: #059669; transform: translateY(-1px); }
+ 
+        /* ── BADGE DE EJERCICIO ── */
+        .ej-badge {
+            display: inline-block;
+            background: var(--oscuro);
+            color: #f59e0b;
+            font-size: 0.65rem;
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 3px;
+            letter-spacing: 0.08em;
+            vertical-align: middle;
+            margin-left: 6px;
+        }
+ 
+        /* ── FOOTER INFO ── */
+        footer {
+            text-align: center;
+            padding: 24px 16px;
+            font-size: 0.78rem;
+            color: #94a3b8;
+            border-top: 1px solid #e2e8f0;
+            margin-top: 20px;
+        }
+        footer code {
+            font-family: monospace;
+            background: #e2e8f0;
+            padding: 1px 5px;
+            border-radius: 3px;
+        }
+ 
+        @media (max-width: 600px) {
+            .contenedor { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+ 
+    <!-- ══════════════════════════════
+         HEADER CON CANVAS ANIMADO
+    ══════════════════════════════ -->
+    <header>
+        <canvas id="logoCanvas" width="400" height="80"></canvas>
+        <p class="subtitulo">¡Los mejores productos a precios de feria!</p>
+    </header>
+ 
+    <!-- ══════════════════════════════
+         PANEL DE CONTROL (EJ 1 + 2)
+    ══════════════════════════════ -->
+    <div class="panel-ejercicios">
+        <label>Ejercicio 1 · Velocidad:</label>
+        <div class="speed-control">
+            <span style="font-size:0.75rem;color:#64748b;">Lento</span>
+            <input type="range" id="velSlider" min="0.3" max="6" step="0.1" value="1">
+            <span style="font-size:0.75rem;color:#64748b;">Rápido</span>
+            <span class="speed-value" id="velLabel">1</span>
+        </div>
+ 
+        <label style="margin-left:14px;">Ejercicio 2 · Tema color:</label>
+        <button class="ej-btn activo" id="btnDia"   onclick="aplicarTema('dia')">☀️ Día</button>
+        <button class="ej-btn"        id="btnNoche" onclick="aplicarTema('noche')">🌙 Nocturno</button>
+    </div>
+ 
+    <!-- ══════════════════════════════
+         CONTENIDO PRINCIPAL
+    ══════════════════════════════ -->
+    <main class="contenedor">
+        <section class="productos">
+ 
+            <!-- Categoría: Electrónicos -->
+            <div class="categoria">
+                <h2>⚡ Electrónicos</h2>
+                <div class="lista-productos">
+                    <button class="btn-producto" onclick="mostrarDetalle('USB','$5','Memoria de 64 GB de alta velocidad.')">USB</button>
+                    <button class="btn-producto" onclick="mostrarDetalle('Chip Celular','$3','Conectividad 4G/5G con saldo inicial.')">Chip Celular</button>
+                    <button class="btn-producto" onclick="mostrarDetalle('Cargador','$10','Carga rápida de 20 W tipo C.')">Cargador Celular</button>
+                </div>
+            </div>
+ 
+            <!-- Categoría: Doméstico -->
+            <div class="categoria">
+                <h2>🏠 Doméstico</h2>
+                <div class="lista-productos">
+                    <button class="btn-producto" onclick="mostrarDetalle('Cocina Portátil','$25','Ideal para camping, funciona con gas butano.')">Cocina Portátil</button>
+                    <button class="btn-producto" onclick="mostrarDetalle('Cuchillos','$8','Set de 3 cuchillos de acero inoxidable.')">Cuchillos</button>
+                    <button class="btn-producto" onclick="mostrarDetalle('Encendedor','$2','Recargable y resistente al viento.')">Encendedor</button>
+ 
+                    <!-- ═══════════════════════════════════════
+                         EJERCICIO 3 · NUEVO PRODUCTO AÑADIDO
+                         (dentro de la categoría Doméstico,
+                          justo después del "Encendedor")
+                    ═══════════════════════════════════════ -->
+                    <button class="btn-producto"
+                            onclick="mostrarDetalle('Sartén Antiadherente','$15','Sartén de 24 cm con recubrimiento de teflón y mango ergonómico.')"
+                            title="Ejercicio 3 — Nuevo producto añadido">
+                        Sartén Antiadherente
+                        <span class="ej-badge">EJ.3</span>
+                    </button>
+                </div>
+            </div>
+ 
+        </section>
+ 
+        <!-- Panel lateral dinámico -->
+        <aside class="panel-info">
+            <h3>Información del Producto</h3>
+            <div id="vista-previa">
+                <p style="color:#94a3b8; font-size:0.85rem;">Haz clic en cualquier producto para ver sus detalles aquí.</p>
+            </div>
+        </aside>
+    </main>
+ 
+    <footer>
+        Proyecto: <code>index.html</code> · <code>estilos.css</code> · <code>script.js</code> — Ejercicios 1, 2 y 3 resueltos e integrados.
+    </footer>
+ 
+    <!-- ══════════════════════════════
+         SCRIPT PRINCIPAL (script.js — integrado)
+    ══════════════════════════════ -->
+    <script>
+    // ──────────────────────────────────────────────────
+    //  VARIABLES DE ESTADO
+    // ──────────────────────────────────────────────────
+    let posX      = 200;   // Posición horizontal inicial del texto
+    let velocidad = 1;     // Desplazamiento en px por fotograma (EJ.1: ajustable)
+ 
+    // Temas de color para Canvas (EJ.2)
+    const TEMAS = {
+        dia: {
+            fondo:   '#ef4444',   // Rojo original
+            borde:   '#f59e0b',   // Ámbar original
+            texto:   '#ffffff'
+        },
+        noche: {
+            fondo:   '#2e1065',   // Morado oscuro (EJ.2)
+            borde:   '#22c55e',   // Verde brillante (EJ.2)
+            texto:   '#e2e8f0'
+        }
+    };
+    let temaActual = 'dia';
+ 
+ 
+    // ──────────────────────────────────────────────────
+    //  EJ.1 · CONTROL DE VELOCIDAD VÍA SLIDER
+    // ──────────────────────────────────────────────────
+    const velSlider = document.getElementById('velSlider');
+    const velLabel  = document.getElementById('velLabel');
+ 
+    velSlider.addEventListener('input', function () {
+        // Mantener el signo de la dirección actual al cambiar magnitud
+        const signo = velocidad >= 0 ? 1 : -1;
+        velocidad   = signo * parseFloat(this.value);
+        velLabel.textContent = parseFloat(this.value).toFixed(1);
+    });
+ 
+ 
+    // ──────────────────────────────────────────────────
+    //  EJ.2 · CAMBIO DE TEMA CROMÁTICO
+    // ──────────────────────────────────────────────────
+    function aplicarTema(tema) {
+        temaActual = tema;
+        document.getElementById('btnDia').classList.toggle('activo',   tema === 'dia');
+        document.getElementById('btnNoche').classList.toggle('activo', tema === 'noche');
+    }
+ 
+ 
+    // ──────────────────────────────────────────────────
+    //  BUCLE DE ANIMACIÓN CANVAS
+    //  (incorpora EJ.1: velocidad dinámica y EJ.2: colores)
+    // ──────────────────────────────────────────────────
+    function animarLogo() {
+        const canvas = document.getElementById('logoCanvas');
+        const ctx    = canvas.getContext('2d');
+        const tema   = TEMAS[temaActual];
+ 
+        // 1. Borrar el lienzo (sin esto se acumula rastro visual)
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+ 
+        // 2. Fondo del letrero — EJ.2: color del tema seleccionado
+        ctx.fillStyle = tema.fondo;
+        ctx.fillRect(10, 10, 380, 60);
+ 
+        // 3. Marco decorativo — EJ.2: borde del tema seleccionado
+        ctx.strokeStyle = tema.borde;
+        ctx.lineWidth   = 4;
+        ctx.strokeRect(15, 15, 370, 40);
+ 
+        // 4. Actualizar posición — EJ.1: velocidad controlada por slider
+        posX += velocidad;
+ 
+        // 5. Control de rebote: invertir dirección al alcanzar límites
+        if (posX > 270 || posX < 130) {
+            velocidad *= -1;
+        }
+ 
+        // 6. Texto animado en la nueva posición
+        ctx.fillStyle  = tema.texto;
+        ctx.font       = 'bold 21px Syne, Arial, sans-serif';
+        ctx.textAlign  = 'center';
+        ctx.fillText('FERIA "DANIELITO"', posX, 45);
+ 
+        // 7. Solicitar siguiente fotograma (~60 fps)
+        requestAnimationFrame(animarLogo);
+    }
+ 
+    // Iniciar el bucle cuando todos los recursos estén listos
+    window.onload = animarLogo;
+ 
+ 
+    // ──────────────────────────────────────────────────
+    //  INTERACTIVIDAD DOM
+    //  EJ.3: función reutilizada por el nuevo botón "Sartén"
+    // ──────────────────────────────────────────────────
+    function mostrarDetalle(nombre, precio, descripcion) {
+        const contenedor = document.getElementById('vista-previa');
+ 
+        // Efecto flash al actualizar el panel
+        contenedor.style.opacity = '0';
+        setTimeout(() => {
+            contenedor.innerHTML = `
+                <h4>${nombre}</h4>
+                <p><strong>Precio Especial:</strong> ${precio}</p>
+                <p>${descripcion}</p>
+                <button class="btn-apartar">🛒 Apartar Producto</button>
+            `;
+            contenedor.style.opacity = '1';
+        }, 120);
+    }
+    </script>
+ 
+</body>
+</html>
