@@ -1,0 +1,33 @@
+/* css/estilos.css */
+
+body {
+    background-color: #1e293b;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    color: white;
+}
+
+h1 {
+    font-size: 1.4rem;
+    margin-bottom: 10px;
+    color: #f59e0b;
+}
+
+canvas {
+    display: block;
+    border: 3px solid #475569;
+    border-radius: 8px;
+}
+
+.hud {
+    display: flex;
+    justify-content: space-between;
+    width: 400px;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+}
